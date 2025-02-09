@@ -4,12 +4,14 @@ const mongoose = require('mongoose');
 const Listing = require("./models/listings");
 const Path = require("path");
 const methodOverride = require('method-override')
+const engine = require('ejs-mate')
 
 app.use(express.urlencoded({extended : true}));
 app.use(methodOverride('_method'))
+app.use(express.static(Path.join(__dirname,"/public")));
 app.set("view engine","ejs");
 app.set("views",Path.join(__dirname,"/views"));
-
+app.engine('ejs', engine);
 
 main().catch(err => console.log(err));
 
@@ -28,6 +30,7 @@ app.get("/listings/new",(req,res)=>{
     res.render("listings/new.ejs");
 })
 
+//edit route
 app.get("/listings/:id/edit",async(req,res)=>{
     let {id} = req.params;
     let listing = await Listing.findById(id);
@@ -41,6 +44,7 @@ app.get("/listings/:id",async(req,res)=>{
     res.render("listings/show.ejs",{listing});
 })
 
+//update route
 app.put("/listings/:id",async(req,res)=>{
     let {id} = req.params ;
     let data = req.body;
@@ -48,6 +52,7 @@ app.put("/listings/:id",async(req,res)=>{
     res.redirect(`/listings/${id}`);
 })
 
+//create route
 app.post("/listings",async(req,res)=>{
     let data = req.body;
     let newdata = new Listing(data);
@@ -56,6 +61,8 @@ app.post("/listings",async(req,res)=>{
     res.redirect("/listings"); 
 })
 
+
+//delete route
 app.delete("/listings/:id",async(req,res)=>{
     let {id} = req.params;
     await Listing.findByIdAndDelete(id);

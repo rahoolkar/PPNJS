@@ -1,20 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+<% layout("/layouts/boilerplate.ejs") %>
 <body>
-    <h3>Create new Post</h3>
-    <form action="/listings" method="post">
-        <input type="text" name="title" placeholder="enter title">
-        <textarea name="description" rol="20" cols="10" placeholder="enter description"></textarea>
-        <input type="text" name="image" placeholder="enter image">
-        <input type="number" name="price" placeholder="enter price">
-        <input type="text" name="location" placeholder="enter location">
-        <input type="text" name="country" placeholder="enter country">
-        <button>Submit</button>
-    </form>
+    <div class="row">
+        <div class="col-8 offset-2">
+            <br><br>
+            <h1>Create a new Listing</h1>
+            <form action="/listings" method="post" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control"  name="title" id="title" placeholder="enter title" required> 
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div> 
+                    <div class="invalid-feedback">
+                        Please choose a valid title.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="description" class="form-control" placeholder="enter description" id="description" required></textarea>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div> 
+                    <div class="invalid-feedback">
+                        Please provide a valid description.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="image" class="form-label">Image</label>
+                    <input type="text" class="form-control" name="image" placeholder="enter image URL/Link" id="image">
+                </div>
+                <div class="row">
+                    <div class="mb-3 col-md-4">
+                        <label for="price" class="form-label">Price</label>
+                        <input type="text" class="form-control" name="price" placeholder="enter price" id="price" required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div> 
+                        <div class="invalid-feedback">
+                            Please provide a valid price.
+                        </div>
+                    </div>
+                    <div class="mb-3 col-md-8">
+                        <label for="country" class="form-label">Country</label>
+                        <input type="text" class="form-control" name="country" placeholder="enter country" id="country" required>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div> 
+                        <div class="invalid-feedback">
+                            Please provide a valid country name.
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">   
+                    <label for="location" class="form-label">Location</label>
+                    <input type="text" class="form-control" name="location" placeholder="enter location" id="location" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div> 
+                    <div class="invalid-feedback">
+                        Please provide a location.
+                    </div>
+                </div>
+                <button class="btn btn-dark edit-btn">Submit</button>
+                <br><br>
+            </form>
+        </div>
+    </div>
 </body>
-</html>
