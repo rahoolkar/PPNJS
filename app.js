@@ -5,6 +5,9 @@ const Listing = require("./models/listings");
 const Path = require("path");
 const methodOverride = require('method-override')
 const engine = require('ejs-mate')
+const wrapAsync = require("./utils/wrapAsync.js");
+const myError = require("./utils/myError.js");
+const schema = require("./schema.js");
 
 app.use(express.urlencoded({extended : true}));
 app.use(methodOverride('_method'))
@@ -20,10 +23,10 @@ async function main() {
 }
 
 //index route
-app.get("/listings",async(req,res)=>{
+app.get("/listings",wrapAsync(async(req,res)=>{
     let listings = await Listing.find({});
     res.render("listings/index.ejs",{listings})
-})
+}))
 
 //new route 
 app.get("/listings/new",(req,res)=>{
@@ -31,42 +34,63 @@ app.get("/listings/new",(req,res)=>{
 })
 
 //edit route
-app.get("/listings/:id/edit",async(req,res)=>{
+app.get("/listings/:id/edit",wrapAsync(async(req,res)=>{
     let {id} = req.params;
     let listing = await Listing.findById(id);
     res.render("listings/edit.ejs",{listing});
-})
+}))
 
 //show route
-app.get("/listings/:id",async(req,res)=>{
+app.get("/listings/:id",wrapAsync(async(req,res)=>{
     let {id} = req.params;
     let listing = await Listing.findById(id);
     res.render("listings/show.ejs",{listing});
-})
+}))
 
 //update route
-app.put("/listings/:id",async(req,res)=>{
+app.put("/listings/:id",validateListings,wrapAsync(async(req,res)=>{
     let {id} = req.params ;
     let data = req.body;
     await Listing.findByIdAndUpdate(id,data);
     res.redirect(`/listings/${id}`);
-})
+}))
 
-//create route
-app.post("/listings",async(req,res)=>{
+//middleware for the post route 
+const validateListings = (req,res,next)=>{
+    let data = req.body;
+    let result = schema.validate(data);
+    if(result.error){
+        throw new myError(400,result.error);
+    }else{
+        next();
+    }
+}
+
+//post route
+app.post("/listings",validateListings,wrapAsync(async(req,res,next)=>{
     let data = req.body;
     let newdata = new Listing(data);
-    let result = await newdata.save()
-    console.log(result);
+    await newdata.save()
     res.redirect("/listings"); 
-})
-
+}))
 
 //delete route
-app.delete("/listings/:id",async(req,res)=>{
+app.delete("/listings/:id",wrapAsync(async(req,res)=>{
     let {id} = req.params;
     await Listing.findByIdAndDelete(id);
     res.redirect("/listings");
+}))
+
+//* route
+app.all("*",(req,res)=>{
+    throw new myError(401,"Page Bihari le gaye");
+})
+
+//error middleware
+app.use((err,req,res,next)=>{
+    let {status = 500,message = "page not found"} = err;
+    console.log(err)
+    res.render("error.ejs",{status,message});
 })
 
 app.listen(8080,()=>{
