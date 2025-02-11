@@ -1,5 +1,6 @@
+const { ref } = require('joi');
 const mongoose = require('mongoose');
-
+const Review = require("./reviews.js");
 const listingSchema = new mongoose.Schema({
     title : {
         type : String,
@@ -25,7 +26,19 @@ const listingSchema = new mongoose.Schema({
     country : {
         type : String,
         required : true
-    }
+    },
+    reviews : [
+        {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : "Review"
+        }
+    ]
+})
+
+
+//mongoose middleware
+listingSchema.post("findOneAndDelete",async(data)=>{
+    await Review.deleteMany({_id : {$in : data.reviews}});
 })
 
 const Listing = mongoose.model("Listing",listingSchema);
