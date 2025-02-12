@@ -5,10 +5,14 @@ const Path = require("path");
 const methodOverride = require('method-override')
 const engine = require('ejs-mate')
 const listing = require("./routes/listings.js");
-const review  = require("./routes/review.js")
-const session = require('express-session')
-const myError = require("./utils/myError.js")
+const review  = require("./routes/review.js");
+const user = require("./routes/signup.js");
+const login  = require("./routes/login.js");
+const session = require('express-session');
 const flash = require('connect-flash');
+var passport = require('passport');
+var LocalStrategy = require('passport-local');
+const User = require("./models/users.js");
 
 app.use(express.urlencoded({extended : true}));
 app.use(methodOverride('_method'))
@@ -35,20 +39,32 @@ const sessionOptions = {
 }
 
 app.use(session(sessionOptions));
-app.use(flash());
+app.use(flash()); //flash uses express session
+app.use(passport.initialize()); //passport uses express session
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use((req,res,next)=>{
     res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
     next();
 })
 
 app.use("/listings",listing);
 app.use("/listings/:id/reviews",review);
+app.use("/signup",user);
+app.use("/login",login);
 
-//* route
-// app.all("*",(req,res)=>{
-//     throw new myError(401,"Page Bihari le gaye");
-// })
+app.get("/demouser",async(req,res)=>{
+    let fakedata = new User({email:"ghi@google.com",username:"ghi"});
+    let ans = await User.register(fakedata,"ghi@123");
+    // await fakedata.setPassword('abc@123');
+    // await fakedata.save();
+    // const {user} = await User.authenticate()('abc', 'abc@123');
+    res.send(ans);
+})
 
 //error middleware
 app.use((err,req,res,next)=>{
