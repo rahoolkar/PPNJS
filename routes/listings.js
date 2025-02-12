@@ -5,6 +5,7 @@ const myError = require("../utils/myError.js");
 const {listingschema} = require("../schema.js");
 const Listing = require("../models/listings.js");
 
+
 //middleware for the post route 
 const validateListings = (req,res,next)=>{
     let data = req.body;
@@ -19,7 +20,7 @@ const validateListings = (req,res,next)=>{
 //index route
 router.get("/",wrapAsync(async(req,res)=>{
     let listings = await Listing.find({});
-    res.render("listings/index.ejs",{listings})
+    res.render("listings/index.ejs",{listings});
 }))
 
 //new route 
@@ -54,6 +55,7 @@ router.post("/",validateListings,wrapAsync(async(req,res,next)=>{
     let data = req.body;
     let newdata = new Listing(data);
     await newdata.save()
+    req.flash("success","New Listing created !")
     res.redirect("/listings"); 
 }))
 
