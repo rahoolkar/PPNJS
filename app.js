@@ -13,6 +13,7 @@ const flash = require('connect-flash');
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
 const User = require("./models/users.js");
+const myError = require("./utils/myError.js");
 
 app.use(express.urlencoded({extended : true}));
 app.use(methodOverride('_method'))
@@ -49,6 +50,7 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req,res,next)=>{
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
+    res.locals.user = req.user;
     next();
 })
 
@@ -57,20 +59,26 @@ app.use("/listings/:id/reviews",review);
 app.use("/signup",user);
 app.use("/login",login);
 
-app.get("/demouser",async(req,res)=>{
-    let fakedata = new User({email:"ghi@google.com",username:"ghi"});
-    let ans = await User.register(fakedata,"ghi@123");
-    // await fakedata.setPassword('abc@123');
-    // await fakedata.save();
-    // const {user} = await User.authenticate()('abc', 'abc@123');
-    res.send(ans);
+app.get("/logout",(req,res)=>{
+    req.logout((error)=>{
+        if(error){
+            next(error);
+        }else{
+            req.flash("success","You logged out !!")
+            res.redirect("/listings");
+        }
+    })
+})
+
+app.all("*",(req,res,next)=>{
+    throw new myError(404,"Page Bihari le gaye");
 })
 
 //error middleware
 app.use((err,req,res,next)=>{
-    let {status = 500,message = "page not found"} = err;
+    let {status = 500,messege = "page not found"} = err;
     console.log(err)
-    res.render("error.ejs",{status,message});
+    res.render("error.ejs",{status,messege});
 })
 
 app.listen(8080,()=>{

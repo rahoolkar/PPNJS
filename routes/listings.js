@@ -19,6 +19,7 @@ const validateListings = (req,res,next)=>{
 
 const isLoggedIn = function(req,res,next){
     if(!req.isAuthenticated()){
+        req.session.lastUrl = req.originalUrl;
         req.flash("error","Please log in first");
         res.redirect("/login");
     }else{

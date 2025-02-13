@@ -11,7 +11,14 @@ router.post("/",wrapAsync(async(req,res)=>{
     try{
         let {username,email,password} = req.body;
         let newUser = new User ({username,email});
-        await User.register(newUser,password);
+        let registereduser = await User.register(newUser,password);
+        req.login(registereduser,(error)=>{
+            if(error){
+                return next(error);
+            }
+            req.flash("success","Welcome to WanderLust");
+            res.redirect("/listings");
+        })
         req.flash("success","Welcome to WanderLust");
         res.redirect("/listings");
     }catch(error){
