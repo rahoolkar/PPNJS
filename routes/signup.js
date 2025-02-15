@@ -2,29 +2,11 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/users");
 const wrapAsync = require("../utils/wrapAsync");
+const {getSignupPage,postSignup} = require("../controllers/signup");
 
-router.get("/",(req,res)=>{
-    res.render("users/signup.ejs");
-})
+//get signup page route
+router.get("/",getSignupPage);
 
-router.post("/",wrapAsync(async(req,res)=>{
-    try{
-        let {username,email,password} = req.body;
-        let newUser = new User ({username,email});
-        let registereduser = await User.register(newUser,password);
-        req.login(registereduser,(error)=>{
-            if(error){
-                return next(error);
-            }
-            req.flash("success","Welcome to WanderLust");
-            res.redirect("/listings");
-        })
-        req.flash("success","Welcome to WanderLust");
-        res.redirect("/listings");
-    }catch(error){
-        req.flash("error",error.message);
-        res.redirect("/signup");
-    }
-}))
+router.post("/",wrapAsync(postSignup));
 
 module.exports = router;
