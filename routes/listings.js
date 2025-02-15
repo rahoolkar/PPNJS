@@ -27,6 +27,17 @@ const isLoggedIn = function(req,res,next){
     }
 }
 
+//middleware for authentication
+const isAllowed = async function(req,res,next){
+    let {id} = req.params ;
+    let listing = await Listing.findById(id);
+    if(!listing.owner._id.equals(req.user._id)){
+        req.flash("error","You are not permitted to do this. Sorry :(");
+        return res.redirect(`/listings/${id}`);
+    }
+    next();
+}
+
 //index route
 router.get("/",wrapAsync(async(req,res)=>{
     let listings = await Listing.find({});
@@ -39,7 +50,7 @@ router.get("/new",isLoggedIn,(req,res)=>{
 })
 
 //edit route
-router.get("/:id/edit",isLoggedIn,wrapAsync(async(req,res)=>{
+router.get("/:id/edit",isLoggedIn,isAllowed,wrapAsync(async(req,res)=>{
     let {id} = req.params;
     let listing = await Listing.findById(id);
     if(!listing){
@@ -52,7 +63,7 @@ router.get("/:id/edit",isLoggedIn,wrapAsync(async(req,res)=>{
 //show route
 router.get("/:id",wrapAsync(async(req,res)=>{
     let {id} = req.params;
-    let listing = await Listing.findById(id).populate("reviews");
+    let listing = await Listing.findById(id).populate({path : "reviews",populate : {path : "author"}}).populate("owner");
     if(!listing){
         req.flash("error","Listing not found :(")
         res.redirect("/listings");
@@ -61,7 +72,7 @@ router.get("/:id",wrapAsync(async(req,res)=>{
 }))
 
 //update route
-router.put("/:id",validateListings,isLoggedIn,wrapAsync(async(req,res)=>{
+router.put("/:id",isLoggedIn,isAllowed,validateListings,wrapAsync(async(req,res)=>{
     let {id} = req.params ;
     let data = req.body;
     await Listing.findByIdAndUpdate(id,data);
@@ -70,16 +81,17 @@ router.put("/:id",validateListings,isLoggedIn,wrapAsync(async(req,res)=>{
 }))
 
 //post route
-router.post("/",validateListings,isLoggedIn,wrapAsync(async(req,res,next)=>{
+router.post("/",isLoggedIn,validateListings,wrapAsync(async(req,res,next)=>{
     let data = req.body;
     let newdata = new Listing(data);
+    newdata.owner = req.user._id;
     await newdata.save()
     req.flash("success","New Listing created !")
     res.redirect("/listings"); 
 }))
 
 //delete route
-router.delete("/:id",isLoggedIn,wrapAsync(async(req,res)=>{
+router.delete("/:id",isLoggedIn,isAllowed,wrapAsync(async(req,res)=>{
     let {id} = req.params;
     await Listing.findByIdAndDelete(id);
     req.flash("success","Listing deleted!");

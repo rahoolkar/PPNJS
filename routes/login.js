@@ -17,13 +17,18 @@ const redirect = function(req,res,next){
 router.post('/',redirect, 
     passport.authenticate('local', { failureRedirect: '/login', failureFlash : true }),
     function(req, res) {
-        req.flash("success","Welcome to WanderLust !");
+        try{
+            req.flash("success","Welcome to WanderLust !");
         if(res.locals.lastUrl){
             redirectUrl = res.locals.lastUrl;
         }else{
             redirectUrl = "/listings";
         }
         res.redirect(redirectUrl);
+        }catch(error){
+            req.flash("error",error.message);
+            res.redirect("/login");
+        }
     });
 
 module.exports = router;
