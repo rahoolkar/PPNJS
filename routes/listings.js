@@ -39,6 +39,9 @@ const isAllowed = async function(req,res,next){
     next();
 }
 
+//router.route code version
+//router.route("/").get(wrapAsync(index)).post(isLoggedIn,validateListings,wrapAsync(postListings));
+
 //index route
 router.get("/",wrapAsync(index));
 
