@@ -58,7 +58,7 @@ router.get("/:id/edit",isLoggedIn,isAllowed,wrapAsync(editListings));
 router.get("/:id",wrapAsync(showListings));
 
 //update route
-router.put("/:id",isLoggedIn,isAllowed,validateListings,wrapAsync(updateListings));
+router.put("/:id",isLoggedIn,isAllowed,upload.single('image'),validateListings,wrapAsync(updateListings));
 
 //post route
 router.post("/",isLoggedIn,upload.single('image'),wrapAsync(postListings));
