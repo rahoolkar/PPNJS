@@ -11,9 +11,8 @@ const listingSchema = new mongoose.Schema({
         required : true
     },
     image : {
-        type : String,
-        default : "https://www.shutterstock.com/image-vector/image-icon-600nw-211642900.jpg",
-        set : (v) => v===""? "https://www.shutterstock.com/image-vector/image-icon-600nw-211642900.jpg": v
+        url : String,
+        filename : String
     },
     price : {
         type : Number,

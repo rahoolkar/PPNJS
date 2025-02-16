@@ -21,8 +21,11 @@ module.exports.showListings = async(req,res)=>{
 
 module.exports.postListings = async(req,res,next)=>{
     let data = req.body;
+    let url = req.file.path;
+    let filename = req.file.filename;
     let newdata = new Listing(data);
     newdata.owner = req.user._id;
+    newdata.image = {url,filename};
     await newdata.save()
     req.flash("success","New Listing created !")
     res.redirect("/listings"); 

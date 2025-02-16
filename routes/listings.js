@@ -5,6 +5,9 @@ const myError = require("../utils/myError.js");
 const {listingschema} = require("../schema.js");
 const Listing = require("../models/listings.js");
 const {index,renderNewForm,showListings,postListings,editListings,updateListings,deleteListings} = require("../controllers/listings.js");
+const multer  = require('multer')
+const {storage} = require("../cloudConfig.js");
+const upload = multer({ storage })
 
 //middleware for the post and edit route 
 const validateListings = (req,res,next)=>{
@@ -58,7 +61,7 @@ router.get("/:id",wrapAsync(showListings));
 router.put("/:id",isLoggedIn,isAllowed,validateListings,wrapAsync(updateListings));
 
 //post route
-router.post("/",isLoggedIn,validateListings,wrapAsync(postListings));
+router.post("/",isLoggedIn,upload.single('image'),wrapAsync(postListings));
 
 //delete route
 router.delete("/:id",isLoggedIn,isAllowed,wrapAsync(deleteListings));
