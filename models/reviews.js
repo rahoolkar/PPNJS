@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { type, min } = require("../schema");
 
 const reviewSchema = new mongoose.Schema({
     comment : {

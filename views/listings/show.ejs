@@ -70,6 +70,7 @@
     </div>
     <% } %>
     <hr>
+    <% if(listing.reviews.length>0){ %>
     <div class="col-8 offset-2 mn-3">
         <h3>All Reviews</h3>
         <div class="row">
@@ -87,5 +88,18 @@
             <% } %> 
         </div>
     </div>
+    <% } %>
+    <div class="col-8 offset-2 mn-3">
+        <h4>Where you will be:</h4>
+        <div id="map"></div>
+    </div>
 </body>
+<script>
+	mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+    const map = new mapboxgl.Map({
+        container: 'map', 
+        center: [-74.5, 40],
+        zoom: 9 
+    });
+</script>
 
