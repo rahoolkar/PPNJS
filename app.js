@@ -73,9 +73,9 @@ app.get("/logout",(req,res)=>{
     })
 })
 
-app.all("*",(req,res,next)=>{
-    throw new myError(404,"Page Bihari le gaye");
-})
+// app.all("*",(req,res,next)=>{
+//     throw new myError(404,"Page Bihari le gaye");
+// })
 
 //error middleware
 app.use((err,req,res,next)=>{
