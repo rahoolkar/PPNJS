@@ -14,7 +14,9 @@ const flash = require('connect-flash');
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
 const User = require("./models/users.js");
+const Lisiting = require("./models/listings.js");
 const myError = require("./utils/myError.js");
+const wrapAsync = require('./utils/wrapAsync.js');
 
 app.use(express.urlencoded({extended : true}));
 app.use(methodOverride('_method'))
@@ -57,6 +59,12 @@ app.use((req,res,next)=>{
     next();
 })
 
+app.get("/listings/search",wrapAsync(async(req,res)=>{
+    let {q} = req.query;
+    let listings = await Lisiting.find({$or : [{location:q},{country:q}]});
+    res.render("search.ejs",{listings,q});
+}))
+
 app.use("/listings",listing);
 app.use("/listings/:id/reviews",review);
 app.use("/signup",user);
@@ -72,6 +80,8 @@ app.get("/logout",(req,res)=>{
         }
     })
 })
+
+
 
 // app.all("*",(req,res,next)=>{
 //     throw new myError(404,"Page Bihari le gaye");

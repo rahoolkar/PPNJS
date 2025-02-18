@@ -1,99 +1,6 @@
 <% layout('/layouts/boilerplate') -%>
-<style>
-    #filters{
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-    }
-
-    .filter{
-        text-align: center;
-        margin-right: 2rem;
-        margin-top: 1.5rem;
-        opacity: 0.7;
-    }
-
-    .filter:hover{
-        opacity: 1;
-        cursor: pointer;
-    }
-    
-    .tax-info{
-        display: none;
-    }
-
-    .tax-toggle{
-        border: 1px solid black;
-        border-radius: 1rem;
-        height: 4rem;
-        padding: 1.1rem;
-        margin-left: 3rem;
-    }
-</style>
+<%- include("../layouts/uibar.ejs"); %>
 <body>
-    <div id="filters">
-        <div class="filter">
-            <div><i class="fa-solid fa-fire"></i></div>
-            <p>Trendings</p>
-        </div>
-
-        <div class="filter">
-            <div><i class="fa-solid fa-bed"></i></div>
-            <p>Rooms</p>
-        </div>
-
-        <div class="filter">
-            <div><i class="fa-solid fa-city"></i></div>
-            <p>Iconic cities</p>
-        </div>
-
-        <div class="filter">
-            <div><i class="fa-solid fa-mountain"></i></div>
-            <p>Mountains</p>
-        </div>
-
-        <div class="filter">
-            <div><i class="fa-brands fa-fort-awesome"></i></div>
-            <p>Castles</p>
-        </div>
-
-        <div class="filter">
-            <div><i class="fa-solid fa-person-swimming"></i></div>
-            <p>Pools</p>
-        </div>
-
-        <div class="filter">
-            <div><i class="fa-solid fa-tent"></i></div>
-            <p>Camps</p>
-        </div>
-
-        <div class="filter">
-            <div><i class="fa-solid fa-bowl-food"></i></div>
-            <p>Restraunts</p>
-        </div>
-
-        <div class="filter">
-            <div><i class="fa-solid fa-wheat-awn"></i></div>
-            <p>Farms</p>
-        </div>
-
-        <div class="filter">
-            <div><i class="fa-solid fa-igloo"></i></div>
-            <p>Domes</p>
-        </div>
-
-        <div class="filter">
-            <div><i class="fa-solid fa-umbrella-beach"></i></div>
-            <p>Islands</p>
-        </div>
-
-        <div class="tax-toggle">
-            <div class="form-check-reverse form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-                <label class="form-check-label" for="flexSwitchCheckDefault">Prices after taxes</label>
-            </div>
-        </div>
-    </div>
     <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
         <% for(let listing of listings){ %>
             <a href="/listings/<%= listing._id %>" class="listing-link">
@@ -110,18 +17,6 @@
         <% } %>
     </div>
 </body>
-<script>
-    let toggle = document.getElementById("flexSwitchCheckDefault");
-    toggle.addEventListener("click",()=>{
-        let infoTaxes = document.getElementsByClassName("tax-info");
-        for(let infoTax of infoTaxes){
-            if(infoTax.style.display!="inline"){
-                infoTax.style.display = "inline";
-            }else{
-                infoTax.style.display = "none";
-            }
-        }
-    })
-</script>
+
 
 
